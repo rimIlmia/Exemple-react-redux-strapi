@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import api from '../utils/api'
+import api from "../utils/api";
 import store from "./store";
 
-// App init 
+// App init
 //     -> useEffect -> je vais récupérer les livres (getBooks)
 //     -> je dis à mon store, ok, je commence à récupérer les livres : dispatch({ type: 'FETCH_BOOKS' });
 //     -> ......... FETCH_BOOKS (3 hours later...)
@@ -12,23 +12,22 @@ import store from "./store";
 //Function que j'exporte
 
 export const getBooks = (filter) => {
-    return dispatch => {
-        dispatch({ type: 'FETCH_BOOKS' });
-
-        return api
-            .get(`/books/${filter ? filter : ''}`)
-            .then(response => {
-                const books = response.data;
-
-                if (books) {
-                    dispatch({ type: 'SET_BOOKS', payload: books });
-                }
-            })
-            .catch(error => {
-                throw error;
-            })
-    }
-}
+  return (dispatch) => {
+    dispatch({ type: "FETCH_BOOKS" });
+    return api
+      .get(`/books/${filter ? filter : ""}`)
+      .then((response) => {
+        const books = response.data;
+        console.log("books---------------", books);
+        if (books) {
+          dispatch({ type: "SET_BOOKS", payload: books });
+        }
+      })
+      .catch((error) => {
+        throw error;
+      });
+  };
+};
 
 // Quand l'api a répondu : je dis à mon store de se populate avec les données
 // dispatch({ type: 'SET_BOOKS', payload: books });
@@ -42,43 +41,37 @@ export const getBooks = (filter) => {
 // }
 
 const collection = (state = null, action) => {
-    switch (action.type) {
-        case "SET_BOOKS":
-            return action.payload;
-        case "CLEAR_BOOKS":
-            return null
-        default:
-            return state
-    }
-}
-
-// Départ du state
-
-// bookStore = {
-//     collection: null,
-//     isLoading: false,
-//     selectedBook: null
-// }
-
-// Je dis à mon app, ok récupère moi les livres
-// dispatch({ type: 'FETCH_BOOKS' });
-
-// bookStore = {
-//     collection: null,
-//     isLoading: true,
-//     selectedBook: null
-// }
+  switch (action.type) {
+    case "SET_BOOKS":
+      return action.payload;
+    case "CLEAR_BOOKS":
+      return null;
+    default:
+      return state;
+  }
+};
 
 const isLoading = (state = false, action) => {
-    switch (action.type) {
-        case "FETCH_BOOKS":
-            return true;
-        case "SET_BOOKS":
-            return false;
-        default:
-            return state
-    }
-}
+  switch (action.type) {
+    case "FETCH_BOOKS":
+      return true;
+    case "SET_BOOKS":
+      return false;
+    default:
+      return state;
+  }
+};
+
+const selectedBook = (state = null, action) => {
+  switch (action.type) {
+    case "SELECT_BOOK":
+      return action.payload;
+    case "CLEAR_BOOK":
+      return null;
+    default:
+      return state;
+  }
+};
 
 // let book = {
 //     id: '1',
@@ -95,22 +88,10 @@ const isLoading = (state = false, action) => {
 //     DISPATCH({ type: 'SELECT_BOOK', payload: book })
 // }
 
-
-const selectedBook = (state = null, action) => {
-    switch (action.type) {
-        case "SELECT_BOOK":
-            return action.payload;
-        case "CLEAR_BOOK":
-            return null;
-        default:
-            return state
-    }
-}
-
 const books = combineReducers({
-    collection,
-    isLoading,
-    selectedBook
+  collection,
+  isLoading,
+  selectedBook,
 });
 
 export default books;
